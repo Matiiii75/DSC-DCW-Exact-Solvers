@@ -4,3 +4,4 @@ instances/
 .vscode/
 .DS_Store
 graphs/
+run_experiments.sh
