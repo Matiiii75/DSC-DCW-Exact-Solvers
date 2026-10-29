@@ -16,14 +16,14 @@ struct Master
     const Data& data; 
     double time_limit; 
     bool write_results;
-    const Criteres* critere; // le critère à optimiser (si pretraite avec FPT) 
+    const Criteres* critere; // the criterion to optimize (if preprocessed with FPT) 
     bool display_order = false; 
 
     Master(
         const Data& _data,   
         double _time_limit, 
         bool _write_results,
-        const Criteres* _critere = nullptr // par défaut, pointeur null
+        const Criteres* _critere = nullptr // default, null pointer
     ): data(_data), time_limit(_time_limit), write_results(_write_results), critere(_critere) {}
 
     Master(
@@ -39,4 +39,4 @@ struct Master
     void solve_DSC3() const; 
 
     void display_execution_choice(const std::string& algo_type, const std::string& critere) const; 
-}; 
+};

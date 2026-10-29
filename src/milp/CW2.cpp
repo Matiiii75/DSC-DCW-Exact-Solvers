@@ -6,7 +6,7 @@ void CW2::solve(bool verbose)
         
         GRBEnv env(true);
         env.set(GRB_IntParam_OutputFlag, verbose);
-        env.set(GRB_IntParam_Threads, 1); // FORCER GUROBI A N'UTILISER QU'UN SEUL THREAD PAR INSTANCE
+        env.set(GRB_IntParam_Threads, 1); // FORCE GUROBI TO USE ONLY ONE THREAD PER INSTANCE
         env.start();
 
         GRBModel model(env);
@@ -20,7 +20,7 @@ void CW2::solve(bool verbose)
         int puit = data.t; 
         int nb_pos = nb_nodes+1;
         
-        std::vector<int> all_pos; // pr stocker toutes les positions [1,n]
+        std::vector<int> all_pos; // to store all positions [1,n]
         for(int i = 1; i < nb_pos; ++i) all_pos.push_back(i);  
 
         std::vector<std::pair<int, int>> all_arcs;
@@ -34,7 +34,7 @@ void CW2::solve(bool verbose)
 
         // VARIABLES 
 
-        // z : zij = 1 si i est placé avant j 
+        // z: zij = 1 if i is placed before j 
 
         std::vector<std::vector<GRBVar>> z(nb_nodes, std::vector<GRBVar>(nb_nodes)); 
 
@@ -45,8 +45,8 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // l : lui = 1 si phi(u) <= i
-        // r : rui = 1 si phi(u) > i 
+        // l: lui = 1 if phi(u) <= i
+        // r: rui = 1 if phi(u) > i 
 
         std::vector<std::vector<GRBVar>> l(nb_nodes, std::vector<GRBVar>(nb_pos)); 
         std::vector<std::vector<GRBVar>> r(nb_nodes, std::vector<GRBVar>(nb_pos));
@@ -60,15 +60,15 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // variables auvi = 1 si phi(u) <= i, pih(v) > i. 0 sinon 
+        // variables auvi = 1 if phi(u) <= i, phi(v) > i. 0 otherwise 
         std::map<std::pair<int,int>, std::vector<GRBVar>> a; 
         for(const auto& arc : all_arcs) {
             int u = arc.first; 
             int v = arc.second; 
-            a[{u,v}].resize(nb_pos); // allouer la taille juste pr cet arc
+            a[{u,v}].resize(nb_pos); // allocate the exact size for this arc
             for(int i : all_pos) {
                 std::string name = "a_" + std::to_string(u) + "_" + std::to_string(v) + std::to_string(i); 
-                // on peut déclarer z en CONTINUE 
+                // we can declare z as CONTINUOUS 
                 a[{u,v}][i] = model.addVar(0.0, 1.0 , 0.0, GRB_CONTINUOUS, name); 
             }
         }
@@ -77,12 +77,12 @@ void CW2::solve(bool verbose)
 
         GRBVar C = model.addVar(0.0, GRB_INFINITY, 0.0, GRB_CONTINUOUS, "C"); 
 
-        // objectif 
+        // objective 
 
         GRBLinExpr obj = C; 
         model.setObjective(obj, GRB_MINIMIZE); 
 
-        // contraintes 
+        // constraints 
 
         for(auto& arc : all_arcs) {
             int u = arc.first; 
@@ -90,26 +90,26 @@ void CW2::solve(bool verbose)
             model.addConstr(z[u][v] == 1); 
         }
 
-        // z[s][u] = 1 pour tout u
+        // z[s][u] = 1 for all u
         for(int u = 0; u < nb_nodes; ++u) {
             if(u == source) continue; 
             model.addConstr(z[source][u] == 1); 
         }
 
-        // z[u][t] = 1 pour tout u
+        // z[u][t] = 1 for all u
         for(int u = 0; u < nb_nodes; ++u) {
             if(u == puit) continue; 
             model.addConstr(z[u][puit] == 1); 
         }
 
-        // antisymétrie 
+        // antisymmetry 
         for(int u = 0; u < nb_nodes-1; ++u) { 
             for(int v = u+1; v < nb_nodes; ++v) {
                 model.addConstr(z[u][v] + z[v][u] == 1); 
             }
         }
 
-        // transitivé
+        // transitivity
         for(int u = 1; u < puit-2; ++u) {
             for(int v = u+1; v < puit-1; ++v) {
                 for(int w = v+1; w < puit; ++w) {
@@ -121,7 +121,7 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // définition de l 
+        // definition of l 
         for(int u = 0; u < nb_nodes; ++u) {
             for(int i : all_pos) {
                 GRBLinExpr cstr_def_l = 0; 
@@ -133,7 +133,7 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // définition de r 
+        // definition of r 
         for(int u = 0; u < nb_nodes; ++u) {
             for(int i : all_pos) {
                 GRBLinExpr cstr_def_r = 0; 
@@ -145,7 +145,7 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // définition de auvi 
+        // definition of auvi 
         for(auto& arc : all_arcs) {
             for(int i : all_pos) {
                 int u = arc.first; 
@@ -154,7 +154,7 @@ void CW2::solve(bool verbose)
             }
         }
 
-        // définition de C 
+        // definition of C 
 
         for(int i : all_pos) {
             GRBLinExpr cstr_def_C = 0; 
@@ -166,7 +166,7 @@ void CW2::solve(bool verbose)
             model.addConstr(C >= cstr_def_C); 
         }
 
-        // Résolution
+        // Solving
         model.optimize();
 
         int status = model.get(GRB_IntAttr_Status);
@@ -175,7 +175,7 @@ void CW2::solve(bool verbose)
 
             this->total_time = model.get(GRB_DoubleAttr_Runtime); 
 
-            if (model.get(GRB_IntAttr_SolCount) > 0) { // si on a trouvé au moins une solution 
+            if (model.get(GRB_IntAttr_SolCount) > 0) { // if at least one solution was found 
                 
                 this->found_solution = true; 
                 this->optimal_value = model.get(GRB_DoubleAttr_ObjVal);
@@ -194,9 +194,9 @@ void CW2::solve(bool verbose)
             std::cout << "[Gurobi] ERREUR : Le modele est infaisable.\n";
         }
 
-        // Pas de nettoyage manuel à faire : model puis env (ordre inverse de
-        // construction) sont détruits automatiquement en sortie de portée,
-        // que la fonction se termine normalement ou via une exception.
+        // No manual cleanup needed: model then env (reverse order of
+        // construction) are destroyed automatically out of scope,
+        // whether the function terminates normally or via an exception.
 
     } catch (const GRBException& e) {
         std::cerr << "\n[CRASH GUROBI] Code " << e.getErrorCode() << " : " << e.getMessage() << "\n";
@@ -220,6 +220,3 @@ SolverResults CW2::get_results()
 
     return res; 
 }
-
-
-

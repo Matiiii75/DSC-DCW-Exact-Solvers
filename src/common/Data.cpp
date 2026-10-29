@@ -2,12 +2,12 @@
 
 std::string getFileName(const std::string& path) {
 
-    size_t lastSlash = path.find_last_of("/\\"); // compatible mac/linux
+    size_t lastSlash = path.find_last_of("/\\"); // mac/linux compatible
     return (lastSlash == std::string::npos) ? path : path.substr(lastSlash + 1);
 
 }
 
-/* DÉBUT PARTIE KEYHASH CANDIDATS */
+/* BEGIN CANDIDATES KEYHASH SECTION */
 
 bool keyHash::operator==(const keyHash& other) const {
     return l == other.l && r == other.r;
@@ -27,7 +27,7 @@ std::ostream& keyHash::operator<<(std::ostream& os) const {
 
 keyHash randomGenerator(std::mt19937_64& moteur) {
 
-    // pr générer entre 0 et le max encodé sur 64 bits aléatoirement 
+    // to generate randomly between 0 and the max encoded on 64 bits 
     std::uniform_int_distribution<std::uint64_t> dist(0, 
         std::numeric_limits<std::uint64_t>::max()); 
 
@@ -41,19 +41,19 @@ keyHash randomGenerator(std::mt19937_64& moteur) {
 keyHash compute_cand_hash(const std::vector<int>& cand, const std::vector<keyHash>& node_to_hash) {
 
     keyHash base; 
-    base.l = 0; // on créer un hash vallant 0 au début
+    base.l = 0; // we create a hash with value 0 at the beginning
     base.r = 0; 
 
-    for(const int c : cand) { // on xor tous les candidats entre eux 
+    for(const int c : cand) { // we XOR all the candidates together 
         base = base ^ node_to_hash[c]; 
     }
 
-    return base; // a la fin, base vaut le xor de tous les candidats 
+    return base; // at the end, base is the XOR of all the candidates 
 }
 
-/* FIN PARTIE KEYHASH CANDIDATS */
+/* END CANDIDATES KEYHASH SECTION */
 
-/* DÉBUT PARTIE DATA */
+/* BEGIN DATA SECTION */
 
 Data::Data(const std::string& file) {
 
@@ -81,7 +81,7 @@ Data::Data(const std::string& file) {
     this->s = 0; 
     this->t = this->dag_size-1; 
 
-    compute_node_to_hash(); // calcul des hash 
+    compute_node_to_hash(); // compute hashes 
     compute_transitive_closure(); 
 
 }
@@ -94,7 +94,7 @@ Data::Data(const std::vector<std::vector<int>>& _dag): dag(_dag)
         nb_arcs += (int)_dag[i].size();
     this-> nb_arcs = nb_arcs; 
     
-    // calcul de reverse dag 
+    // compute reverse dag 
     this->reverse_dag.resize(dag_size); 
     for(int i = 0; i < dag_size; ++i) {
         for(int u : _dag[i])
@@ -111,9 +111,9 @@ Data::Data(const std::vector<std::vector<int>>& _dag): dag(_dag)
 void Data::compute_transitive_closure() { 
 
     std::vector<std::vector<bool>> trans_closure(dag_size, 
-        std::vector<bool>(dag_size,0)); // init trans closure tt a 0
+        std::vector<bool>(dag_size,0)); // init trans closure all to 0
     
-    // on copie les relations du graphe 
+    // we copy the graph relations 
     for(int i = 0; i < dag_size; ++i) {
         for(int j : dag[i]) {
             trans_closure[i][j] = true; 
@@ -121,14 +121,14 @@ void Data::compute_transitive_closure() {
     }
     
     for(int i = 0; i < dag_size; ++i) 
-        trans_closure[i][i] = true; // la diagonale vaut 1
+        trans_closure[i][i] = true; // the diagonal is 1
 
     
     for(int k = 0; k < dag_size; ++k) {
         for(int i = 0; i < dag_size; ++i) {
             for(int j = 0; j < dag_size; ++j) {
 
-                // si i->k & k->j alors i->j
+                // if i->k & k->j then i->j
                 if(trans_closure[i][k] && trans_closure[k][j])
                     trans_closure[i][j] = true; 
 
@@ -143,14 +143,14 @@ void Data::compute_node_to_hash() {
 
     std::vector<keyHash> nodeToHash(dag_size); 
 
-    std::random_device rd; // graine aléatoire
-    std::mt19937_64 moteur(rd()); // generateur aléatoire : produit rapidement un nombre encodé sur 64 bits 
+    std::random_device rd; // random seed
+    std::mt19937_64 moteur(rd()); // random generator: quickly produces a 64-bit encoded number 
 
-    for(int i = 0; i < dag_size; ++i) { // pr chq sommet 
-        nodeToHash[i] = randomGenerator(moteur); // générer aléatoirement son hash 
+    for(int i = 0; i < dag_size; ++i) { // for each vertex 
+        nodeToHash[i] = randomGenerator(moteur); // randomly generate its hash 
     }
 
-    node_to_hash = nodeToHash; // mémorise en attribut de classe 
+    node_to_hash = nodeToHash; // store as a class attribute 
 
 }
 
@@ -177,9 +177,3 @@ void Data::display_reverse_dag() const {
     }
 
 }
-
-
-
-
-
-

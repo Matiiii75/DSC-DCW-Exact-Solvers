@@ -1,8 +1,6 @@
 *.o
 prog 
 instances/
-results/
 .vscode/
 .DS_Store
-stats.ipynb
-Stats_OK.ipynb
+graphs/

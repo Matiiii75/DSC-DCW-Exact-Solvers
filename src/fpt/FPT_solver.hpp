@@ -12,9 +12,9 @@ struct FPT_solver
     State_graph& SG; 
     const Criteres& critere; 
 
-    std::queue<int> L;                                  // liste fifo pour l'algo principal
-    std::vector<int> best_dist;                         // best_dist[ID] = plus courte distance de la source à ID dans SG 
-    std::vector<std::pair<int,int>> pred_in_pcc;        // pred_in_pcc[ID] = {ID_pred, candidat ajouté}
+    std::queue<int> L;                                  // fifo list for the main algorithm
+    std::vector<int> best_dist;                         // best_dist[ID] = shortest distance from source to ID in SG 
+    std::vector<std::pair<int,int>> pred_in_pcc;        // pred_in_pcc[ID] = {ID_pred, added candidate}
 
     double time_limit;  
     Timer timer; 
@@ -33,11 +33,11 @@ struct FPT_solver
     std::vector<int> rebuild_opt_order() const; 
 
     /**
-     * @brief Calcul le cutset associé à un ensemble Candidat 
-     * @param cand ens. cand. considéré 
-     * @param cut_set_size passé par référence, pour récup la taille du cutset calculé
-     * @param cut_set passé par référence, pour récupéré le cutset calculé
-     * @param hors_cut_set passé par référence, pour récupéré V-S
+     * @brief Computes the cutset associated with a Candidate set 
+     * @param cand considered candidate set 
+     * @param cut_set_size passed by reference, to retrieve the size of the computed cutset
+     * @param cut_set passed by reference, to retrieve the computed cutset
+     * @param hors_cut_set passed by reference, to retrieve V-S
      */
     void compute_cut_set(
         const std::vector<int>& cand, 
@@ -47,14 +47,14 @@ struct FPT_solver
     ) const; 
 
     /**
-     * @brief Vérifie si la limite de temps est dépassée 
-     * @param iteration_count iteration compteur (on évalue que si c'est un multiple de 10000)
-     * @return true si on a pas atteint la limite, false sinon 
+     * @brief Checks if the time limit has been exceeded 
+     * @param iteration_count iteration counter (we only evaluate if it's a multiple of 10000)
+     * @return true if the limit has not been reached, false otherwise 
      */
     bool try_eval_time_limit(int iteration_count); 
     
     /**
-     * @brief Met à jour le label de distance d'un ensemble candidat
+     * @brief Updates the distance label of a candidate set
      */
     inline void update_distance_label(int C1_ID, int C2_ID, int curr_c) 
     {
@@ -68,12 +68,12 @@ struct FPT_solver
     } 
 
     /**
-     * @brief Solveur pour l'algorithme FPT. Il construit le graphe d'états. 
+     * @brief Solver for the FPT algorithm. It builds the state graph. 
      */
     void solve(); 
 
     /**
-     * @brief extrait les données obtenues suite à la résolution. 
+     * @brief extracts the data obtained after resolution. 
      */
     SolverResults get_results() const; 
-}; 
+};

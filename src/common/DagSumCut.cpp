@@ -27,20 +27,20 @@ int DagSumCut::compute_dist_from_pred(int best_dist_pred, int weight_pred) const
 int DagSumCut::compute_objective_value(const std::vector<int>& ordre_topo) const  
 {
     int obj_val = 0; 
-    for(int i = 0; i < (int)ordre_topo.size()-1; ++i) { // pr chq position 
+    for(int i = 0; i < (int)ordre_topo.size()-1; ++i) { // for each position 
         int valeur_ordre_i = 0; 
-        for(int j = 0; j <= i; ++j) { // pr chq position avant i (in coupe)
+        for(int j = 0; j <= i; ++j) { // for each position before i (in cut)
             bool go_next_int_coupe = false; 
-            int node_in_coupe = ordre_topo[j]; // récup le sommet associé 
-            if(node_in_coupe == data.s) continue; // ignorer s 
-            for(int k = i+1; k < (int)ordre_topo.size(); ++k) { // pr chq position apres i (hors coupe)
-                int node_hors_coupe = ordre_topo[k]; // récup noeud associé 
+            int node_in_coupe = ordre_topo[j]; // retrieve the associated vertex 
+            if(node_in_coupe == data.s) continue; // ignore s 
+            for(int k = i+1; k < (int)ordre_topo.size(); ++k) { // for each position after i (outside cut)
+                int node_hors_coupe = ordre_topo[k]; // retrieve the associated node 
                 if(node_hors_coupe == data.t) continue; 
                 for(int neigh : data.dag[node_in_coupe]) {
                     if(neigh == node_hors_coupe) {
-                        ++valeur_ordre_i; // trouvé un succ hors coupe 
+                        ++valeur_ordre_i; // found a successor outside the cut 
                         go_next_int_coupe = true; 
-                        break; // go next node in coupe 
+                        break; // go next node in cut 
                     }
                 }
                 if(go_next_int_coupe) break; 
@@ -53,14 +53,14 @@ int DagSumCut::compute_objective_value(const std::vector<int>& ordre_topo) const
 
 bool DagSumCut::checker(const std::vector<int>& ordre_topo, int value_found) const 
 {
-    // commencer par vérifier que c'est bien un ordre topologique valide
-    // ie : vérifier que pour toute paire (u,v) suivant l'ordre topo, 
+    // start by checking that it is a valid topological order
+    // i.e., check that for every pair (u,v) following the topological order, 
     // (v,u) notin A 
 
     for(int i = 0; i < (int)ordre_topo.size()-1; ++i) {
         for(int j = i+1; j < (int)ordre_topo.size(); ++j) {
 
-            int node1 = ordre_topo[i]; // 1er dans l'ordre
+            int node1 = ordre_topo[i]; // 1st in the order
             int node2 = ordre_topo[j]; // 2nd
 
             for(int neigh : data.dag[node2])
@@ -104,4 +104,3 @@ void DagSumCut::aggrege_trivial_components(int& global_value, int nb_two_nodes_c
 {
     global_value += nb_two_nodes_comp;
 }
-

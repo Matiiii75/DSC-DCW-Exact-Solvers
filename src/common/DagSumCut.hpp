@@ -12,7 +12,7 @@ struct DagSumCut : Criteres
         int pred_cand_set_weight, 
         int cand_c, 
         const std::vector<uint8_t>& cut_set
-    ) const override;  // override indique au compilateur que cette méthode redéfinit une méthode virtual
+    ) const override;  // override tells the compiler that this method redefines a virtual method
 
     virtual int compute_dist_from_pred(
         int best_dist_pred, 
@@ -35,6 +35,4 @@ struct DagSumCut : Criteres
     virtual void aggrege_sub_solution(int& global_value, int sub_optimal_value) const override; 
 
     virtual void aggrege_trivial_components(int& global_value, int nb_two_nodes_comp) const override; 
-}; 
-
-
+};

@@ -7,11 +7,10 @@ struct Timer {
 
     std::chrono::steady_clock::time_point start; 
 
-    // démarrer un minuteur 
+    // start a timer 
     void start_timer(); 
 
-    // récuperer le temps passé depuis le début 
+    // retrieve the elapsed time since the beginning 
     double get_temps_passe(); 
 
-};  
-
+};

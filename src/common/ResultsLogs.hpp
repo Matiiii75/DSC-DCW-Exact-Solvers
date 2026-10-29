@@ -10,5 +10,4 @@ struct ResultsLogs
     void write_FPT_results(const SolverResults& res, const std::string& critere); 
     void write_MILP_results(const SolverResults& res, const std::string& model); 
     void write_FPT_pre_traitement_results(const SolverResults& res, const std::string& critere); 
-}; 
-
+};

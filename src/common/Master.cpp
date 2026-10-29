@@ -20,9 +20,9 @@ void Master::solve_FPT_pre_traitement() const
 
     for(int i = 0; i < (int)pt.sub_instances.size(); ++i) 
     {
-        // on doit créer sub_critere car critere possède la topologie
-        // du dag initial et ne pourra donc pas évaluer les coupes proprement. 
-        // on créer donc un sous_critere depuis sub_inst
+        // we must create sub_critere because critere possesses the topology
+        // of the initial dag and will therefore not be able to evaluate the cuts properly. 
+        // we therefore create a sub_critere from sub_inst
         const Data& sub_inst = pt.sub_instances[i]; 
         auto sub_critere = critere->clone(sub_inst); 
         State_graph sub_SG(sub_inst); 
@@ -47,24 +47,24 @@ void Master::solve_FPT_pre_traitement() const
 
     double total_time = time_limit - time_remaining; 
 
-    if(!found_global_solution) // si on a pas trouvé une solution complete
+    if(!found_global_solution) // if we haven't found a complete solution
     {
         res = pt.store_results(
-            -1, // opt par defaut
+            -1, // default opt
             nb_total_cands, 
             total_time, 
-            {-1} // global solution par défaut 
+            {-1} // default global solution 
         ); 
     } 
-    else // si on a trouvé une solution complète
+    else // if we have found a complete solution
     {
-        // reconstruction de la solution : 
+        // reconstruction of the solution: 
         std::vector<int> global_solution; 
         
-        for(int node : pt.one_node_comp) // ajt compo 1 sommet
+        for(int node : pt.one_node_comp) // add 1-vertex comp
             global_solution.push_back(node); 
 
-        for(auto& nodes : pt.two_nodes_comp) { // ajt compo 2 sommets
+        for(auto& nodes : pt.two_nodes_comp) { // add 2-vertices comp
             int u = nodes.first; 
             int v = nodes.second; 
             bool u_is_pref_of_v = false; 
@@ -82,7 +82,7 @@ void Master::solve_FPT_pre_traitement() const
             }
         }
 
-        for(auto& sol : sub_solutions) { // ajt compo > 2 sommets 
+        for(auto& sol : sub_solutions) { // add > 2 vertices comp 
             for(int node : sol) 
                 global_solution.push_back(node); 
         }
@@ -194,13 +194,13 @@ void Master::solve_DSC3() const
 
 void Master::display_execution_choice(const std::string& algo_type, const std::string& critere) const 
 {
-    std::cout << "             [-------- ÉXÉCUTION DE "; 
+    std::cout << "             [-------- EXECUTING "; 
     std::cout << algo_type << " " << critere; 
     std::cout << " --------]" << std::endl;
     std::cout << std::endl;
-    std::cout << "[Temps limite]          : " << time_limit << std::endl;
-    std::cout << "[Écriture résultats]    : "; 
-    if(write_results) std::cout << "activée" << std::endl;
-    else std::cout << "désactivée" << std::endl;
+    std::cout << "[Time limit]            : " << time_limit << std::endl;
+    std::cout << "[Write results]         : "; 
+    if(write_results) std::cout << "enabled" << std::endl;
+    else std::cout << "disabled" << std::endl;
     std::cout << std::endl;
 }

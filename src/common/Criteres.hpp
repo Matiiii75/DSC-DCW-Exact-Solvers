@@ -5,14 +5,14 @@
 
 struct Criteres 
 {
-    virtual ~Criteres() = default; // destructeur 
+    virtual ~Criteres() = default; // destructor 
 
     /**
-     * @brief Calcule le poids d'un ensemble candidats en fonction d'un ens. cand. 
-     * prédécesseur et de l'élément candidat ajouté 
-     * @param pred_cand_set_weight le poids d'un predecesseur 
-     * @param cand_c le candidat ajouté
-     * @param cut_set nécéssaire pour la maj de DSC (mais pas pour CW)
+     * @brief Computes the weight of a candidate set based on a predecessor 
+     * candidate set and the added candidate element 
+     * @param pred_cand_set_weight the weight of a predecessor 
+     * @param cand_c the added candidate
+     * @param cut_set necessary for the DSC update (but not for CW)
      */
     virtual int compute_weight(
         int pred_cand_set_weight, 
@@ -21,9 +21,9 @@ struct Criteres
     ) const = 0; 
 
     /**
-     * @brief calcul la distance optimale depuis un prédécesseur 
-     * @param best_dist_pred le label de distance du pred
-     * @param weight_pred le poids du pred dans SG 
+     * @brief computes the optimal distance from a predecessor 
+     * @param best_dist_pred the distance label of the predecessor
+     * @param weight_pred the weight of the predecessor in SG 
      */
     virtual int compute_dist_from_pred(
         int best_dist_pred, 
@@ -31,42 +31,40 @@ struct Criteres
     ) const = 0;  
 
     /**
-     * @brief Calcule la valeur objectif étant donné un ordre topologique 
-     * @param ordre_topo ordre topologique qu'on évalue 
+     * @brief Computes the objective value given a topological order 
+     * @param ordre_topo topological order being evaluated 
      */
     virtual int compute_objective_value(
         const std::vector<int>& ordre_topo
     ) const = 0; 
 
     /**
-     * @brief Checker qui évalue la validité d'un ordre et de sa valeur associée 
-     * @param ordre_topo ordre topologique à évaluer 
-     * @param value_found la valeur objectif trouvée 
+     * @brief Checker that evaluates the validity of an order and its associated value 
+     * @param ordre_topo topological order to evaluate 
+     * @param value_found the found objective value 
      */
     virtual bool checker(
         const std::vector<int>& ordre_topo, 
         int value_found
     ) const = 0; 
 
-    // méthode qui permet de connaitre le critere 
-    // renvoie "DSC" ou "CW"
+    // method to identify the criterion 
+    // returns "DSC" or "CW"
     virtual std::string get_name() const = 0; 
 
     virtual std::unique_ptr<Criteres> clone(const Data& data) const = 0; 
 
     /**
-     * @brief Met à jour la valeur globale de l'objectif lors du pré-traitement
-     * @param global_value La valeur de l'objectif global en cours de calcul (passée par référence)
-     * @param sub_optimal_value La valeur optimale renvoyée par la résolution d'une sous-instance
+     * @brief Updates the global objective value during preprocessing
+     * @param global_value The global objective value being calculated (passed by reference)
+     * @param sub_optimal_value The optimal value returned by solving a sub-instance
      */
     virtual void aggrege_sub_solution(int& global_value, int sub_optimal_value) const = 0; 
 
     /**
-     * @brief Met à jour la valeur globale avec les composantes triviales (taille 2)
-     * @param global_value La valeur de l'objectif global en cours de calcul (passée par référence)
-     * @param nb_two_nodes_comp Le nombre de composantes à 2 nœuds
+     * @brief Updates the global value with trivial components (size 2)
+     * @param global_value The global objective value being calculated (passed by reference)
+     * @param nb_two_nodes_comp The number of 2-node components
      */
     virtual void aggrege_trivial_components(int& global_value, int nb_two_nodes_comp) const = 0;
-}; 
-
-
+};

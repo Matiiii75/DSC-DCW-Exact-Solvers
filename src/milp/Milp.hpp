@@ -18,8 +18,7 @@ struct Milp
         : data(_data), time_limit(_time_limit),
         found_solution(false), total_time(0.0), gap(100.0),
         optimal_value(-1.0), best_bound(-1.0) {}
-    virtual ~Milp() = default; // destructeur  
-    virtual void solve(bool verbose = false) = 0; // résolution du modèle en méthode virtuelle
+    virtual ~Milp() = default; // destructor  
+    virtual void solve(bool verbose = false) = 0; // virtual method for solving the model
     virtual SolverResults get_results() = 0; 
 };
-

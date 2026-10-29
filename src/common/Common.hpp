@@ -14,30 +14,29 @@ struct SolverResults
     std::vector<int> optimal_order;
     double gap = -1.0;
     double best_bound = -1.0; 
-    int nb_sub_pb_solved = -1; // nombre de composantes de taille > 2 détéctées dans l'instance 
+    int nb_sub_pb_solved = -1; // number of components of size > 2 detected in the instance 
     int nb_total_composantes = -1; 
     SolverResults() {}
 }; 
 
 /**
- * @brief fonction qui teste l'inclusion de v1 dans v2 - {t} (car t compte pas dans l'objectif)
- * @param v1 le vecteur qui est inclus 
- * @param v2 vecteur de uint8_t où v2[u] = 1 si u /in cut-set, 0 sinon  
- * @param t le noeud puit qu'on ne considère pas dans le calcul
- * @return true si inclus, false sinon
- * @note on mettra t = -1 par défaut pour dire qu'on regarde juste une inclusion sans chercher à exclure le puit t 
+ * @brief function that tests the inclusion of v1 in v2 - {t} (since t is not counted in the objective)
+ * @param v1 the vector that is included 
+ * @param v2 uint8_t vector where v2[u] = 1 if u \in cut-set, 0 otherwise  
+ * @param t the sink node that is not considered in the calculation
+ * @return true if included, false otherwise
+ * @note t will be set to -1 by default to indicate that we are just checking an inclusion without trying to exclude the sink t 
  */
 bool is_included(const std::vector<int>& v1, const std::vector<uint8_t>& v2, int t); 
 
 /**
- * @brief détermine si il existe un successeur de gamma qui n'est pas dans le cut set
+ * @brief determines if there exists a successor of gamma that is not in the cut set
  * (l.8,9 - algo 2)
- * @param succ_gamma vecteur contenant les successeurs de gamma 
- * @param t le noeud puit du dag (à ne pas considérer dans les calculs justement)
- * @param cut_set vecteur de uint8_t où v2[u] = 1 si u /in cut-set, 0 sinon
- * @return vrai si il existe un successeur, faux sinon 
- * @note version où le cut_set est un unordered_set
+ * @param succ_gamma vector containing the successors of gamma 
+ * @param t the sink node of the dag (precisely not to be considered in the calculations)
+ * @param cut_set uint8_t vector where cut_set[u] = 1 if u \in cut-set, 0 otherwise
+ * @return true if a successor exists, false otherwise 
+ * @note version where the cut_set is an unordered_set
  */
 bool is_disjoint(const std::vector<int>& succ_gamma, int t, 
-    const std::vector<uint8_t>& cut_set); 
-
+    const std::vector<uint8_t>& cut_set);

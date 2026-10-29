@@ -6,7 +6,7 @@ void DSC2::solve(bool verbose)
         
         GRBEnv env(true); 
         env.set(GRB_IntParam_OutputFlag, verbose);
-        env.set(GRB_IntParam_Threads, 1); // FORCER GUROBI A N'UTILISER QU'UN SEUL THREAD PAR INSTANCE
+        env.set(GRB_IntParam_Threads, 1); // FORCE GUROBI TO USE ONLY ONE THREAD PER INSTANCE
         env.start();
 
         GRBModel model(env);
@@ -40,9 +40,9 @@ void DSC2::solve(bool verbose)
             }
         }
 
-        // DÉFINITION VARIABLES 
+        // VARIABLES DEFINITION 
 
-        // z : zij = 1 si i est placé avant j 
+        // z: zij = 1 if i is placed before j 
 
         std::vector<std::vector<GRBVar>> z(nb_nodes, std::vector<GRBVar>(nb_nodes)); 
 
@@ -71,7 +71,7 @@ void DSC2::solve(bool verbose)
             Mu[i] = model.addVar(0.0, GRB_INFINITY, 0.0, GRB_CONTINUOUS, name); 
         }
 
-        // DÉFINITION OBJECTIF 
+        // OBJECTIVE DEFINITION 
 
         GRBLinExpr obj = 0; 
         
@@ -80,9 +80,9 @@ void DSC2::solve(bool verbose)
         }
         model.setObjective(obj, GRB_MINIMIZE); 
 
-        // DÉFINITION CONTRAINTES 
+        // CONSTRAINTS DEFINITION 
 
-        // si (u,v) \in A -> zuv = 1
+        // if (u,v) \in A -> zuv = 1
 
         for(auto& arc : all_arcs) {
             int u = arc.first; 
@@ -90,7 +90,7 @@ void DSC2::solve(bool verbose)
             model.addConstr(z[u][v] == 1); 
         }
 
-        // antisymétrie 
+        // antisymmetry 
 
         for(int i = 0; i < (int)all_nodes.size(); ++i) {
             int u = all_nodes[i]; 
@@ -100,7 +100,7 @@ void DSC2::solve(bool verbose)
             }
         }
 
-        // définitions de Phi
+        // Phi definitions
 
         for(int u : all_nodes) {
             GRBLinExpr cstr_def_Phi = 0; 
@@ -111,7 +111,7 @@ void DSC2::solve(bool verbose)
             model.addConstr(Phi[u] == cstr_def_Phi); 
         }
 
-        // DÉFINITION DE Mu 
+        // Mu DEFINITION 
 
         for(int u : all_nodes) {
             model.addConstr(Mu[u] >= Phi[u]); 
@@ -134,7 +134,7 @@ void DSC2::solve(bool verbose)
             }
         }
 
-        // Résolution
+        // Solving
         model.optimize();
 
         int status = model.get(GRB_IntAttr_Status);
@@ -143,7 +143,7 @@ void DSC2::solve(bool verbose)
 
             this->total_time = model.get(GRB_DoubleAttr_Runtime); 
 
-            if (model.get(GRB_IntAttr_SolCount) > 0) { // si on a trouvé au moins une solution 
+            if (model.get(GRB_IntAttr_SolCount) > 0) { // if at least one solution was found 
                 
                 this->found_solution = true; 
                 this->optimal_value = model.get(GRB_DoubleAttr_ObjVal);
@@ -162,9 +162,9 @@ void DSC2::solve(bool verbose)
             std::cout << "[Gurobi] ERREUR : Le modele est infaisable.\n";
         }
 
-        // Pas de nettoyage manuel à faire : model puis env (ordre inverse de
-        // construction) sont détruits automatiquement en sortie de portée,
-        // que la fonction se termine normalement ou via une exception.
+        // No manual cleanup needed: model then env (reverse order of
+        // construction) are destroyed automatically out of scope,
+        // whether the function terminates normally or via an exception.
 
     } catch (const GRBException& e) {
         std::cerr << "\n[CRASH GUROBI] Code " << e.getErrorCode() << " : " << e.getMessage() << "\n";
@@ -188,6 +188,3 @@ SolverResults DSC2::get_results()
 
     return res; 
 }
-
-
-

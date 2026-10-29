@@ -3,12 +3,12 @@
 void DSC1::solve(bool verbose)
 {
     try {
-        // GRBEnv et GRBModel sont déjà des objets RAII (l'API Gurobi gère
-        // elle-même la libération des ressources sous-jacentes dans leur
-        // destructeur) : pas besoin de new/delete, des objets locaux suffisent.
+        // GRBEnv and GRBModel are already RAII objects (the Gurobi API manages
+        // the release of the underlying resources itself in their
+        // destructor): no need for new/delete, local objects are sufficient.
         GRBEnv env(true);
-        env.set(GRB_IntParam_OutputFlag, verbose); // 0 pr désactier les affichages dans le terminal
-        env.set(GRB_IntParam_Threads, 1); // FORCER GUROBI A N'UTILISER QU'UN SEUL THREAD PAR INSTANCE
+        env.set(GRB_IntParam_OutputFlag, verbose); // 0 to disable terminal output
+        env.set(GRB_IntParam_Threads, 1); // FORCE GUROBI TO USE ONLY ONE THREAD PER INSTANCE
         env.start();
 
         GRBModel model(env);
@@ -44,7 +44,7 @@ void DSC1::solve(bool verbose)
 
         int last_pos = all_pos.empty() ? -1 : all_pos.back();
 
-        // Matrice de variables (indexée par all_pos et all_nodes)
+        // Variable matrix (indexed by all_pos and all_nodes)
         std::vector<std::vector<GRBVar>> x(nb_nodes, std::vector<GRBVar>(nb_nodes));
         std::vector<std::vector<GRBVar>> y(nb_nodes, std::vector<GRBVar>(nb_nodes));
 
@@ -58,7 +58,7 @@ void DSC1::solve(bool verbose)
             }
         }
 
-        // Objectif
+        // Objective
         GRBLinExpr obj = 0;
         for (int i : all_pos) {
             for (int j : all_nodes) {
@@ -67,21 +67,21 @@ void DSC1::solve(bool verbose)
         }
         model.setObjective(obj, GRB_MINIMIZE);
 
-        // Contrainte 1 : Toute position a un job unique
+        // Constraint 1: Every position has a unique job
         for (int i : all_pos) {
             GRBLinExpr c1 = 0;
             for (int j : all_nodes) c1 += x[i][j];
             model.addConstr(c1 == 1, "pos_" + std::to_string(i));
         }
 
-        // Contrainte 2 : Tout job a une position unique
+        // Constraint 2: Every job has a unique position
         for (int j : all_nodes) {
             GRBLinExpr c2 = 0;
             for (int i : all_pos) c2 += x[i][j];
             model.addConstr(c2 == 1, "node_" + std::to_string(j));
         }
 
-        // Contrainte 3 : Respect de l'ordre imposé par le DAG
+        // Constraint 3: Respect the order imposed by the DAG
         for (int i0 : all_pos) {
             for (auto& arc : all_arcs) {
                 int j1 = arc.first;
@@ -94,7 +94,7 @@ void DSC1::solve(bool verbose)
             }
         }
 
-        // Contrainte 4 : Définition des variables y
+        // Constraint 4: Definition of y variables
         for (int i0 : all_pos) {
             if (i0 == last_pos) continue;
             for (auto& arc : all_arcs) {
@@ -112,8 +112,8 @@ void DSC1::solve(bool verbose)
             }
         }
 
-        // Résolution
-        model.set(GRB_DoubleParam_MIPGap, 0.0); // OPTIMALITÉ STRICTE, on ne s'arrete pas tant que UB != LB
+        // Solving
+        model.set(GRB_DoubleParam_MIPGap, 0.0); // STRICT OPTIMALITY, we do not stop as long as UB != LB
         model.optimize();
 
         int status = model.get(GRB_IntAttr_Status);
@@ -142,9 +142,9 @@ void DSC1::solve(bool verbose)
             std::cout << "[Gurobi] ERREUR : Le modele est infaisable.\n";
         }
 
-        // Pas de nettoyage manuel à faire : model puis env (ordre inverse de
-        // construction) sont détruits automatiquement en sortie de portée,
-        // que la fonction se termine normalement ou via une exception.
+        // No manual cleanup needed: model then env (reverse order of
+        // construction) are destroyed automatically out of scope,
+        // whether the function terminates normally or via an exception.
 
     } catch (const GRBException& e) {
         std::cerr << "\n[CRASH GUROBI] Code " << e.getErrorCode() << " : " << e.getMessage() << "\n";
@@ -168,6 +168,3 @@ SolverResults DSC1::get_results()
 
     return res; 
 }
-
-
-

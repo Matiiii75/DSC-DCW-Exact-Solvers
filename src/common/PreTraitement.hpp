@@ -5,7 +5,7 @@
 
 struct PreTraitement 
 {   
-    const Data& data;                                       // data originales
+    const Data& data;                                       // original data
     std::vector<int> one_node_comp; 
     std::vector<std::pair<int,int>> two_nodes_comp;
     std::vector<std::vector<int>> all_map_new_to_old; 
@@ -13,13 +13,13 @@ struct PreTraitement
 
     PreTraitement(const Data& _data): data(_data) {}
     
-    // calcule toutes les composantes connexes, et mémorise leurs tailles
+    // computes all connected components, and stores their sizes
     std::vector<std::vector<int>> compute_composantes();
     
-    // calcule le sous graphe induit (ré-indexé) par une composante
+    // computes the induced subgraph (re-indexed) by a component
     Dag compute_induced_dag(const std::vector<int>& composante);  
     
-    // calcule les sous-instances induites par composantes faiblement connexes 
+    // computes the sub-instances induced by weakly connected components 
     void compute_sub_instances();
 
     std::vector<int> re_label_sub_solution(

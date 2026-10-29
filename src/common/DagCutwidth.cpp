@@ -35,7 +35,7 @@ int DagCutwidth::compute_objective_value(const std::vector<int>& ordre_topo) con
                 int node_hors_coupe = ordre_topo[k];
                 if(node_hors_coupe == data.t) continue;
                 
-                // CORRECTION : On regarde si les arcs de GAUCHE pointent vers la DROITE
+                // CORRECTION: Check if LEFT arcs point to the RIGHT
                 for(int neigh : data.dag[node_in_coupe]) {
                     if(neigh == node_hors_coupe) {
                         ++valeur_ordre_i; 
@@ -53,10 +53,10 @@ int DagCutwidth::compute_objective_value(const std::vector<int>& ordre_topo) con
 
 bool DagCutwidth::checker(const std::vector<int>& ordre_topo, int value_found) const 
 {
-    for(int i = 0; i < (int)ordre_topo.size()-1; ++i) { // vérifier que c'est bien un ordre valide 
+    for(int i = 0; i < (int)ordre_topo.size()-1; ++i) { // verify that it is indeed a valid order 
         for(int j = i+1; j < (int)ordre_topo.size(); ++j) {
 
-            int node1 = ordre_topo[i]; // 1er dans l'ordre
+            int node1 = ordre_topo[i]; // 1st in the order
             int node2 = ordre_topo[j]; // 2nd
 
             for(int neigh : data.dag[node2]) {
@@ -103,4 +103,3 @@ void DagCutwidth::aggrege_trivial_components(int& global_value, int nb_two_nodes
         global_value = std::max(global_value, 1);
     }
 }
-

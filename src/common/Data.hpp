@@ -15,48 +15,48 @@
 
 using Dag = std::vector<std::vector<int>>;
 
-// prend en entrée un chemin jusqu'à une instance et ressort juste le nom de l'instance 
+// takes as input a path to an instance and returns just the instance name 
 std::string getFileName(const std::string& path); 
 
 /**
- * @brief structure qui représente un bit128 en deux parties de 64 bits
- * @param l les 64 bits de gauche du bit128
- * @param r les 64 bits de droite du bit128
- * @note elle est munie d'operator (==) & (^) pour pouvoir comparer des bit128
- *  et faire le XOR 
+ * @brief structure that represents a 128-bit integer in two 64-bit parts
+ * @param l the left 64 bits of the 128-bit integer
+ * @param r the right 64 bits of the 128-bit integer
+ * @note it is equipped with operator (==) & (^) to be able to compare 128-bit integers
+ *  and perform XOR 
  */
 struct keyHash {
 
-    // l : partie gauche du nombre 
-    // r : partie droite du nombre
+    // l: left part of the number 
+    // r: right part of the number
     std::uint64_t l, r; 
 
-    // définition de l'opérateur == (comparaison)
+    // definition of the == operator (comparison)
     bool operator==(const keyHash& other) const; 
 
-    // définition de l'opérateur XOR 
+    // definition of the XOR operator 
     keyHash operator^(const keyHash& other) const; 
 
-    // operateur d'affichage d'un keyHash
+    // display operator for a keyHash
     std::ostream& operator<<(std::ostream& os) const; 
 
 }; 
 
 
 /**
- * @brief genere un keyhash aléatoire
- * @param moteur c'est le generateur aléatoire qu'on a créé avant
- *  et qui produit rapidement un entier encodé sur 64 bits
- * @return keyhash généré aléatoirement 
+ * @brief generates a random keyhash
+ * @param moteur it is the random generator that we created before
+ *  and which quickly produces an integer encoded on 64 bits
+ * @return randomly generated keyhash 
  */
 keyHash randomGenerator(std::mt19937_64& moteur); 
 
 
 /**
- * @brief calcule le hash d'un ensemble de candidats (noeud du graphe d'états)
- * @param cand l'ensemble candidat 
- * @param node_to_hash structure qui associé à chaque noeud du dag un hash 
- * @return hash de l'ensemble candidats
+ * @brief computes the hash of a candidate set (node of the state graph)
+ * @param cand the candidate set 
+ * @param node_to_hash structure that associates a hash to each node of the dag 
+ * @return hash of the candidate set
  */
 keyHash compute_cand_hash(const std::vector<int>& cand, const std::vector<keyHash>& node_to_hash); 
 
@@ -66,47 +66,38 @@ struct Data {
 
     std::string instance_name; 
 
-    Dag dag; // dag initial
-    Dag reverse_dag; // reverse_dag (on inverse le sens des arcs)
+    Dag dag; // initial dag
+    Dag reverse_dag; // reverse_dag (we invert the direction of the arcs)
 
     int dag_size; 
     int nb_arcs; 
     int degenerascy; 
 
-    int s, t; // source & puit
+    int s, t; // source & sink
     
-    std::vector<std::vector<bool>> TC; // transitive closure du dag initial
-    std::vector<keyHash> node_to_hash; // à chaque noeud du dag, on associe un hash 
+    std::vector<std::vector<bool>> TC; // transitive closure of the initial dag
+    std::vector<keyHash> node_to_hash; // for each node of the dag, we associate a hash 
 
     /**
-     * @brief constructeur de Data : initialise les données du pb, 
-     * comme dag, reverse_dag, transitive closure etc.. à partir d'un instance 
-     * @param file instance du dag initial
-     * @warning ATTENTION : l'ordre des sommets dans dag et reverser_dag doit etre CROISSANT !! 
+     * @brief Data constructor: initializes the problem data, 
+     * like dag, reverse_dag, transitive closure etc.. from an instance 
+     * @param file instance of the initial dag
+     * @warning WARNING: the order of the vertices in dag and reverse_dag must be INCREASING !! 
      */
     Data(const std::string& file); 
 
     /**
-     * @brief constructeur de Data : initialise les données du problème à
-     * partir d'un dag encodé en matrice d'adjacence 
-     * @note : ON PEUT L'AMÉLIORER EN DONNANT LA TC DU DAG ORIGINALE ET LE DICTIONAIRE NEW_TO_OLD
-     * POUR NE PAS AVOIR A RECALCULER LA TC DEPUIS LE DÉBUT 
+     * @brief Data constructor: initializes the problem data from
+     * a dag encoded as an adjacency matrix 
+     * @note : WE CAN IMPROVE THIS BY PROVIDING THE TC OF THE ORIGINAL DAG AND THE NEW_TO_OLD DICTIONARY
+     * SO WE DON'T HAVE TO RECOMPUTE THE TC FROM THE BEGINNING 
      */
     Data(const std::vector<std::vector<int>>& _dag); 
 
-    void compute_transitive_closure(); // calcule la transitive closure (ON PEUT AMELIORER)
-    void compute_node_to_hash(); // calcule les hash de chaque noeud du dag 
+    void compute_transitive_closure(); // computes the transitive closure (CAN BE IMPROVED)
+    void compute_node_to_hash(); // computes the hashes for each node of the dag 
     
-    void display_dag() const; // affichage dag et reverse dag 
+    void display_dag() const; // dag and reverse dag display 
     void display_reverse_dag() const; 
 
-}; 
-
-
-
-
-
-
-
-
-
+};

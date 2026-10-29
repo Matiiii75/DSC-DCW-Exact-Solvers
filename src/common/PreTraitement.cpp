@@ -13,7 +13,7 @@ std::vector<std::vector<int>> PreTraitement::compute_composantes()
     {
         if(visited[u]) continue; 
         std::vector<int> composante; 
-        visited[u] = 1; // retenir qu'on l'a visité 
+        visited[u] = 1; // remember that we visited it 
         std::queue<int> fifo_list; 
         fifo_list.push(u);
 
@@ -26,7 +26,7 @@ std::vector<std::vector<int>> PreTraitement::compute_composantes()
             for(int curr_succ : data.dag[curr]) { 
                 if(curr_succ == data.t || visited[curr_succ]) continue; 
                 visited[curr_succ] = 1; 
-                fifo_list.push(curr_succ); // ajt a la fifo pr traiter ses voisins 
+                fifo_list.push(curr_succ); // add to fifo to process its neighbors 
             }
             for(int curr_preds : data.reverse_dag[curr]) {
                 if(curr_preds == data.s || visited[curr_preds]) continue;  
@@ -52,41 +52,41 @@ std::vector<std::vector<int>> PreTraitement::compute_composantes()
 
 Dag PreTraitement::compute_induced_dag(const std::vector<int>& composante)
 {
-    int new_dag_size = (int)composante.size()+2; // car on ajt s & t 
+    int new_dag_size = (int)composante.size()+2; // because we add s & t 
     int initial_puit = data.t; 
     int source = 0; 
-    int puit = new_dag_size-1; // puit du nv dag 
+    int puit = new_dag_size-1; // sink of the new dag 
 
-    std::vector<int> new_to_old(new_dag_size); // new_to_old[i] = j -> j devient i 
-    std::unordered_map<int,int> old_to_new; // otn[i] = j -> i est devenu j 
+    std::vector<int> new_to_old(new_dag_size); // new_to_old[i] = j -> j becomes i 
+    std::unordered_map<int,int> old_to_new; // otn[i] = j -> i has become j 
 
     new_to_old[source] = source; 
-    old_to_new[source] = source;    // les nv s & t sont associés à eux-même
+    old_to_new[source] = source;    // the new s & t are mapped to themselves
     new_to_old[puit] = puit;        
     old_to_new[puit] = puit; 
 
-    int new_next_dispo = 1; // valeur du prochain nv noeud dispo
+    int new_next_dispo = 1; // value of the next available new node
     for(int u : composante) {
         new_to_old[new_next_dispo] = u; 
         old_to_new[u] = new_next_dispo; 
-        new_next_dispo++; // on passe au prochain 
+        new_next_dispo++; // we move to the next 
     }
 
-    // création du sous graphe 
+    // subgraph creation 
 
     Dag new_dag(new_dag_size);
-    std::vector<bool> has_0_pred(new_dag_size, true); // true -> degré entrant nul
+    std::vector<bool> has_0_pred(new_dag_size, true); // true -> zero in-degree
     
     for(int u : composante) { 
-        int new_u = old_to_new.at(u); // on récup sa nv valeur
+        int new_u = old_to_new.at(u); // we retrieve its new value
         for(int u_neigh : this->data.dag[u]) { 
             if(u_neigh == initial_puit) continue; 
-            int new_neigh_u = old_to_new.at(u_neigh); // nv valeur du voisin
+            int new_neigh_u = old_to_new.at(u_neigh); // new value of the neighbor
             has_0_pred[new_neigh_u] = false; 
             new_dag[new_u].push_back(new_neigh_u); 
         }
     }
-    // connecter source et puit dans le nv dag 
+    // connect source and sink in the new dag 
     for(int u = 1; u < puit; ++u) { 
         if(has_0_pred[u]) 
             new_dag[source].push_back(u); 
@@ -147,4 +147,4 @@ SolverResults PreTraitement::store_results(
 int PreTraitement::count_composantes() const
 {
     return (int)one_node_comp.size() + (int)two_nodes_comp.size() + (int)sub_instances.size(); 
-} 
+}

@@ -1,11 +1,11 @@
-# 1. Variables de configuration
+# 1. Configuration variables
 CXX = g++
 CXXFLAGS = -O3 -g -std=c++17 -Wall -Wextra 
 
-# --- AJOUT CRUCIAL : Indiquer les dossiers contenant les .hpp ---
+# --- CRUCIAL ADDITION: Indicate the folders containing the .hpp files ---
 CXXFLAGS += -Isrc/common -Isrc/fpt -Isrc/milp -Isrc/meta 
 
-# --- DÉTECTION DU SYSTÈME ET DU MODULE GUROBI ---
+# --- SYSTEM AND GUROBI MODULE DETECTION ---
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S), Darwin)
@@ -19,12 +19,12 @@ else
 endif
 
 CXXFLAGS += $(GUROBI_INC)
-# --- FIN CONFIGURATION GUROBI ---
+# --- END GUROBI CONFIGURATION ---
 
-# Un seul exécutable unifié
+# A single unified executable
 EXEC_CPP = prog
 
-# 2. Séparation stricte avec les chemins complets
+# 2. Strict separation with full paths
 SRC_COMMON = src/common/Common.cpp \
              src/common/Data.cpp \
              src/common/Timer.cpp \
@@ -43,23 +43,23 @@ SRC_COMMON = src/common/Common.cpp \
 
 SRC_MAIN_CPP = src/main.cpp
 
-# 3. Transformation des .cpp en .o
+# 3. Transformation of .cpp into .o
 OBJ_COMMON   = $(SRC_COMMON:.cpp=.o)
 OBJ_MAIN_CPP = $(SRC_MAIN_CPP:.cpp=.o)
 
 ALL_OBJ = $(OBJ_COMMON) $(OBJ_MAIN_CPP)
 
-# 4. Règles de construction
+# 4. Build rules
 all: $(EXEC_CPP)
 
-# Programme principal unifié (FPT + Gurobi)
+# Unified main program (FPT + Gurobi)
 $(EXEC_CPP): $(OBJ_MAIN_CPP) $(OBJ_COMMON)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(GUROBI_LIB)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# 5. Nettoyage
+# 5. Cleanup
 clean:
 	rm -f $(ALL_OBJ) $(EXEC_CPP) gurobi.log
 

@@ -28,7 +28,7 @@ void ResultsLogs::display_Milp(const SolverResults& res, bool display_order)
 {
     std::cout << "----- [RESULTATS GUROBI] -----" << std::endl;    
 
-    if(res.found_solution) { // si on a trouvé une solution
+    if(res.found_solution) { // if a solution was found
         std::cout << "--- [Solution trouvée] ---" << std::endl;
         std::cout << "[valeur] : " << res.optimal_value << std::endl;
         std::cout << "[best bound] : " << res.best_bound<< std::endl;
@@ -104,4 +104,3 @@ void ResultsLogs::write_FPT_pre_traitement_results(const SolverResults& res, con
     writing << std::endl;
     writing.close();
 }
-    

@@ -2,8 +2,8 @@
 
 #include "Data.hpp"
 
-// keyHasher custom pour l'unordered_map de la struct "state_graph"
-// lui permet de hasher les clés
+// custom keyHasher for the unordered_map of the "state_graph" struct
+// allows it to hash keys
 struct KeyHasher { 
 
     std::size_t operator()(const keyHash& k) const {
@@ -12,8 +12,7 @@ struct KeyHasher {
 
 }; 
 
-
-// operateur de comparaison custom entre deux clé pour l'um de struct "state_graph" 
+// custom comparison operator between two keys for the um of struct "state_graph" 
 struct KeyEqual {
 
     bool operator()(const keyHash& k1, const keyHash& k2) const {
@@ -21,7 +20,6 @@ struct KeyEqual {
     }
 
 }; 
-
 
 struct State_graph 
 {
@@ -36,47 +34,47 @@ struct State_graph
     State_graph(const Data& _data); 
 
     /**
-     * @brief calcule le premier ensemble candidat
-     * @note il faut trouver tous les successeurs directs de s qui
-     *  n'ont que s en prédécesseur direct
-     * @warning s'occupe du tri de first_cand en interne 
+     * @brief computes the first candidate set
+     * @note we must find all direct successors of s that
+     *  have only s as a direct predecessor
+     * @warning handles the sorting of first_cand internally 
      */
     std::vector<int> compute_first_cand() const; 
 
     /**
-     * @brief vérifie si un ensemble candidat est déja dans SG 
-     * @param cand ensemble candidat à vérifier 
-     * @param cand_hash le hash de l'ensemble candidat (pré-calculé)
-     * @return l'ID si cand est déjà dans SG, -1 sinon 
-     * @warning cand doit être trié par ordre croissant
+     * @brief checks if a candidate set is already in SG 
+     * @param cand candidate set to check 
+     * @param cand_hash the hash of the candidate set (pre-computed)
+     * @return the ID if cand is already in SG, -1 otherwise 
+     * @warning cand must be sorted in ascending order
      */
     int is_cand_in_SG(const std::vector<int>& cand, const keyHash& cand_hash) const ; 
 
     /**
-     * @brief ajoute un ensemble candidat au graphe d'états 
-     * @param cand l'ensemble candidat à ajouter 
-     * @param cand_hash le hash pré-calculé de cand 
-     * @warning on doit rentrer dans cette fonction QUE SI cand n'est pas déjà dans SG 
-     * @note la fonction 
+     * @brief adds a candidate set to the state graph 
+     * @param cand the candidate set to add 
+     * @param cand_hash the pre-computed hash of cand 
+     * @warning we must enter this function ONLY IF cand is not already in SG 
+     * @note the function 
      */
     void add_cand_to_SG(const std::vector<int>& cand, const keyHash& cand_hash);  
 
     /**
-     * @brief getter qui renvoie l'ensemble candidat associé à un ID 
-     * @param ID l'ID voulu
-     * @warning devrait pas arriver mais si l'index ID n'existait pas, lèvera une erreur 
-     * @note ref const sur le type de renvoie pour éviter copie puisqu'on va juste le parcourir 
+     * @brief getter that returns the candidate set associated with an ID 
+     * @param ID the desired ID
+     * @warning shouldn't happen but if the index ID didn't exist, will throw an error 
+     * @note const ref on the return type to avoid copying since we'll just iterate over it 
      */
     const std::vector<int>& get_cand(int ID) const; 
 
     /**
-     * @brief set le poids d'un ID 
+     * @brief sets the weight of an ID 
      * @param ID 
-     * @param w le poids de ID 
-     * @note lève une erreur si ID >= taille(weights)
+     * @param w the weight of ID 
+     * @note throws an error if ID >= size(weights)
      */
     void set_weight(int ID, int w); 
 
     void purge_layer(); 
 
-}; 
+};

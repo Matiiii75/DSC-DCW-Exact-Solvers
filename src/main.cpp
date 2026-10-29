@@ -17,22 +17,23 @@
 
 
 /*
-Main du problème. 
-Prend 3 arguments : 
-1 -> instance du problème
-2 -> choix de l'algo 
-3 -> choix d'écrire le résultats dans un fichier .txt
-Pour lancer le code : 
-./prog [instances/inst.txt] [choix_algo] [choix_ecriture]
-Détail des paramètres : 
+Main of the problem. 
+Takes 3 arguments: 
+1 -> problem instance
+2 -> algorithm choice 
+3 -> choice to write the results to a .txt file
+To run the code: 
+./prog [instances/inst.txt] [algo_choice] [write_choice]
+Parameter details: 
 0 -> DSC FPT 
 1 -> CW FPT 
-2 -> PL DSC1 
-3 -> PL DSC2 
-4 -> PL DSC3
-5 -> PL CW2 
-6 -> PL CW3
-7 -> FPT DSC + Pré-traitement
+2 -> LP DSC1 
+3 -> LP DSC2 
+4 -> LP DSC3
+5 -> LP CW2 
+6 -> LP CW3
+7 -> FPT DSC + Preprocessing
+8 -> FPT DCW + Preprocessing
 */
 
 int main(int argc, char* argv[]) 
@@ -57,38 +58,38 @@ int main(int argc, char* argv[])
         Master master(data, time_limit, write_results, &critere_CW); 
         master.solve_FPT(); 
     }
-    if(choice_algo == 2) // PL DSC1
+    if(choice_algo == 2) // LP DSC1
     {
         Master master(data, time_limit, write_results); 
         master.solve_DSC1(); 
     }
-    if(choice_algo == 3) // PL DSC2
+    if(choice_algo == 3) // LP DSC2
     {
         Master master(data, time_limit, write_results); 
         master.solve_DSC2();
     }
-    if(choice_algo == 4) // PL DSC3
+    if(choice_algo == 4) // LP DSC3
     {
         Master master(data, time_limit, write_results); 
         master.solve_DSC3();  
     }
-    if(choice_algo == 5) // PL CW2
+    if(choice_algo == 5) // LP CW2
     {
         Master master(data, time_limit, write_results); 
         master.solve_CW2();
     }
-    if(choice_algo == 6) // PL CW3
+    if(choice_algo == 6) // LP CW3
     {
         Master master(data, time_limit, write_results); 
         master.solve_CW3(); 
     }
-    if(choice_algo == 7) // pré-traitement DSC
+    if(choice_algo == 7) // DSC preprocessing
     {
         DagSumCut critere_DSC(data); 
         Master master(data, time_limit, write_results, &critere_DSC); 
         master.solve_FPT_pre_traitement(); 
     }
-    if(choice_algo == 8)
+    if(choice_algo == 8) // DCW preprocessing
     {
         DagCutwidth critere_CW(data); 
         Master master(data, time_limit, write_results, &critere_CW); 
